@@ -22,6 +22,8 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body { height: 100%; }
+
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
@@ -33,6 +35,240 @@
     background-attachment: fixed;
   }
 
+  /* ============================================
+     PAGINA DE ÎNTÂMPINARE (WELCOME / LANDING)
+     ============================================ */
+  .welcome-screen {
+    position: fixed; inset: 0; z-index: 4000;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(108,92,231,0.35) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(0,212,255,0.25) 0%, transparent 45%),
+      radial-gradient(circle at 50% 50%, rgba(108,92,231,0.08) 0%, transparent 70%);
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+    animation: fadeIn .5s ease;
+  }
+  .welcome-screen.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .welcome-inner {
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+    padding: 40px 20px;
+    animation: slideUp .6s cubic-bezier(.2,.9,.3,1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .welcome-logo {
+    font-size: 72px;
+    margin-bottom: 16px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(108,92,231,0.6));
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(108,92,231,0.15);
+    border: 1px solid rgba(108,92,231,0.4);
+    color: var(--accent-2);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .welcome-badge span.dot-live {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 12px var(--success);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  .welcome-title {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent-2) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+
+  .welcome-subtitle {
+    font-size: clamp(15px, 1.6vw, 19px);
+    color: var(--text-dim);
+    max-width: 640px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    max-width: 780px;
+    margin: 0 auto 44px;
+  }
+  .feature {
+    background: rgba(26,29,41,0.6);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    backdrop-filter: blur(10px);
+    transition: all .3s ease;
+  }
+  .feature:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 30px rgba(108,92,231,0.2);
+  }
+  .feature-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .feature-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .feature-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .welcome-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 44px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 12px 40px rgba(108,92,231,0.45);
+    letter-spacing: .3px;
+    font-family: inherit;
+  }
+  .welcome-cta:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(108,92,231,0.6);
+  }
+  .welcome-cta:active {
+    transform: translateY(-1px) scale(.99);
+  }
+  .welcome-cta .arrow {
+    transition: transform .3s ease;
+    font-size: 20px;
+  }
+  .welcome-cta:hover .arrow {
+    transform: translateX(6px);
+  }
+
+  .welcome-footer {
+    margin-top: 36px;
+    font-size: 12px;
+    color: var(--text-dim);
+    opacity: .7;
+  }
+
+  /* ============================================
+     ECRAN BLOCARE
+     ============================================ */
+  .lock-screen {
+    position: fixed; inset: 0; z-index: 3000;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(108,92,231,0.25) 0%, transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(0,212,255,0.15) 0%, transparent 50%);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .lock-screen.active { display: flex; }
+
+  .lock-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    width: 100%; max-width: 420px;
+    padding: 40px 32px 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    animation: slideUp .4s ease;
+    text-align: center;
+    position: relative;
+  }
+  .lock-back {
+    position: absolute; top: 16px; left: 16px;
+    background: none; border: none;
+    color: var(--text-dim); cursor: pointer;
+    font-size: 13px; font-weight: 600;
+    padding: 6px 10px; border-radius: 8px;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .lock-back:hover { color: var(--text); background: var(--bg); }
+
+  .lock-icon {
+    font-size: 56px; margin-bottom: 8px;
+    filter: drop-shadow(0 0 20px rgba(108,92,231,0.5));
+  }
+  .lock-title {
+    font-size: 24px; font-weight: 800;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .lock-subtitle {
+    font-size: 13px; color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+  .lock-box .form-group { text-align: left; }
+  .lock-box .btn {
+    width: 100%; justify-content: center;
+    padding: 14px;
+  }
+  .lock-error {
+    color: var(--danger);
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 12px;
+    min-height: 18px;
+  }
+
+  /* ============================================
+     HEADER + MAIN APP
+     ============================================ */
   header {
     position: sticky; top: 0; z-index: 100;
     backdrop-filter: blur(20px);
@@ -62,6 +298,7 @@
     border-radius: 12px;
     color: var(--text); font-size: 14px;
     transition: all .2s;
+    font-family: inherit;
   }
   .search-box input:focus {
     outline: none;
@@ -80,8 +317,8 @@
     font-size: 14px; font-weight: 600;
     transition: all .2s; display: inline-flex;
     align-items: center; gap: 8px; white-space: nowrap;
+    font-family: inherit;
   }
-  .btn-sm { padding: 8px 14px; font-size: 13px; }
   .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--accent-2));
     color: white;
@@ -286,11 +523,11 @@
     max-height: 90vh; overflow-y: auto;
     animation: slideUp .3s ease;
   }
-  .modal-sm { max-width: 420px; }
-  @keyframes slideUp {
+  @keyframes slideUpModal {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .modal { animation: slideUpModal .3s ease; }
 
   .modal-header {
     padding: 24px 24px 16px;
@@ -343,7 +580,7 @@
   .empty h3 { font-size: 20px; color: var(--text); margin-bottom: 8px; }
 
   .toast {
-    position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+    position: fixed; bottom: 24px; right: 24px; z-index: 5000;
     padding: 14px 20px; border-radius: 12px;
     background: var(--bg-card); border: 1px solid var(--border);
     color: var(--text); font-size: 14px;
@@ -356,27 +593,100 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  .login-info {
-    background: rgba(0,212,255,0.08);
-    border: 1px solid rgba(0,212,255,0.3);
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 18px;
-  }
-  .login-info b { color: var(--accent-2); }
-
   @media (max-width: 640px) {
     header { padding: 12px 16px; }
     .filters, .stats, main { padding-left: 16px; padding-right: 16px; }
     .form-row { grid-template-columns: 1fr; }
     .header-inner { gap: 10px; }
+    .welcome-logo { font-size: 56px; }
+    .welcome-cta { padding: 16px 32px; font-size: 15px; }
+    .welcome-features { gap: 10px; }
+    .feature { padding: 16px 12px; }
   }
 </style>
 </head>
 <body>
+
+<!-- ============================================
+     1. PAGINA DE ÎNTÂMPINARE
+     ============================================ -->
+<div class="welcome-screen active" id="welcomeScreen">
+  <div class="welcome-inner">
+
+    <div class="welcome-logo">📌</div>
+
+    <div class="welcome-badge">
+      <span class="dot-live"></span>
+      Platformă activă
+    </div>
+
+    <h1 class="welcome-title">PI Manager</h1>
+
+    <p class="welcome-subtitle">
+      Gestionează toate punctele de interes într-un singur loc.
+      Accesează rapid camere, locații și resurse printr-o interfață simplă și elegantă.
+    </p>
+
+    <div class="welcome-features">
+      <div class="feature">
+        <span class="feature-icon">🎥</span>
+        <div class="feature-title">Acces rapid</div>
+        <div class="feature-desc">Deschide orice PI cu un singur click</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">🔒</span>
+        <div class="feature-title">Securizat</div>
+        <div class="feature-desc">Acces protejat cu parolă</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">📱</span>
+        <div class="feature-title">Responsive</div>
+        <div class="feature-desc">Merge pe telefon, tabletă, PC</div>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">⚡</span>
+        <div class="feature-title">Rapid</div>
+        <div class="feature-desc">Căutare și filtrare instant</div>
+      </div>
+    </div>
+
+    <button class="welcome-cta" onclick="goToLogin()">
+      <span>Intră în platformă</span>
+      <span class="arrow">→</span>
+    </button>
+
+    <div class="welcome-footer">
+      © <span id="year"></span> PI Manager — Toate drepturile rezervate
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================
+     2. ECRAN BLOCARE (parolă)
+     ============================================ -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <button class="lock-back" onclick="backToWelcome()">← Înapoi</button>
+
+    <div class="lock-icon">🔐</div>
+    <div class="lock-title">Acces Restricționat</div>
+    <div class="lock-subtitle">Introdu parola pentru a continua</div>
+
+    <div class="form-group">
+      <label>Parolă</label>
+      <input type="password" id="lockPassword" placeholder="Introdu parola..." autocomplete="current-password">
+    </div>
+
+    <button class="btn btn-primary" onclick="unlockSite()">🔓 Deblochează</button>
+    <div class="lock-error" id="lockError"></div>
+  </div>
+</div>
+
+<!-- ============================================
+     3. APLICAȚIA PRINCIPALĂ
+     ============================================ -->
+<div id="mainApp" style="display:none">
 
 <header>
   <div class="header-inner">
@@ -392,7 +702,7 @@
     <button class="btn btn-ghost admin-only" onclick="importDataClick()">📤 Import</button>
     <button class="btn btn-danger admin-only" onclick="deleteAll()">🗑️ Șterge tot</button>
     <button class="btn btn-primary admin-only" onclick="openModal()">➕ Adaugă PI</button>
-    <button class="btn btn-ghost" id="authBtn" onclick="handleAuthClick()">🔐 Admin</button>
+    <button class="btn btn-ghost" id="authBtn" onclick="handleAuthClick()">🚪 Ieși</button>
     <input type="file" id="importFile" accept=".json" style="display:none">
   </div>
 </header>
@@ -404,30 +714,6 @@
 <main>
   <div class="grid" id="grid"></div>
 </main>
-
-<!-- MODAL LOGIN -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <div class="modal-title">🔐 Autentificare Admin</div>
-      <button class="modal-close" onclick="closeLogin()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="login-info">
-        <b>Vizitator:</b> vede doar titlul și butonul Deschide<br>
-        <b>Admin:</b> vede link-ul și poate edita PI-uri
-      </div>
-      <div class="form-group">
-        <label>Parolă admin</label>
-        <input type="password" id="adminPassword" placeholder="Introdu parola..." autocomplete="current-password">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeLogin()">Anulează</button>
-      <button class="btn btn-primary" onclick="loginAdmin()">🔓 Autentificare</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL ADD/EDIT -->
 <div class="modal-overlay" id="modal">
@@ -493,23 +779,26 @@
   </div>
 </div>
 
+</div><!-- /#mainApp -->
+
 <script>
 // ============================================
-// ⚙️ CONFIGURARE — SCHIMBĂ PAROLA AICI!
+// ⚙️ CONFIGURARE
 // ============================================
-const ADMIN_PASSWORD = 'mada1234'; // ⬅️ SCHIMBĂ CU PAROLA TA
+const VIEWER_PASSWORD = 'vizitator2024';
+const ADMIN_PASSWORD = 'admin123';
 const SESSION_KEY = 'pi_manager_role';
 const STORAGE_KEY = 'pi_manager_data_v1';
 
 // ============================================
 // STARE
 // ============================================
-let currentRole = sessionStorage.getItem(SESSION_KEY) || 'viewer';
+let currentRole = sessionStorage.getItem(SESSION_KEY) || null;
 let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 let currentFilter = 'all';
 let currentSearch = '';
 
-// Demo initial
+// Demo
 if (data.length === 0) {
   data = [
     { id: '1', title: 'Cameră intrare', link: '192.168.1.1:85', category: '📷 Cameră',
@@ -520,12 +809,16 @@ if (data.length === 0) {
   save();
 }
 
+// An curent în footer
+document.getElementById('year').textContent = new Date().getFullYear();
+
 // ============================================
 // HELPERS
 // ============================================
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function isAdmin() { return currentRole === 'admin'; }
+function isLoggedIn() { return currentRole === 'admin' || currentRole === 'viewer'; }
 function normalizeUrl(link) {
   if (!link) return '';
   if (/^https?:\/\//i.test(link)) return link;
@@ -540,48 +833,82 @@ function toast(msg, icon = '✅') {
 }
 
 // ============================================
+// NAVIGARE ÎNTRE ECRANE
+// ============================================
+function goToLogin() {
+  document.getElementById('welcomeScreen').classList.remove('active');
+  document.getElementById('lockScreen').classList.add('active');
+  setTimeout(() => document.getElementById('lockPassword').focus(), 200);
+}
+
+function backToWelcome() {
+  document.getElementById('lockScreen').classList.remove('active');
+  document.getElementById('welcomeScreen').classList.add('active');
+  document.getElementById('lockPassword').value = '';
+  document.getElementById('lockError').textContent = '';
+}
+
+function showWelcome() {
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('lockScreen').classList.remove('active');
+  document.getElementById('welcomeScreen').classList.add('active');
+}
+
+function showLock() {
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('welcomeScreen').classList.remove('active');
+  document.getElementById('lockScreen').classList.add('active');
+  document.getElementById('lockPassword').value = '';
+  document.getElementById('lockError').textContent = '';
+  setTimeout(() => document.getElementById('lockPassword').focus(), 200);
+}
+
+function showApp() {
+  document.getElementById('welcomeScreen').classList.remove('active');
+  document.getElementById('lockScreen').classList.remove('active');
+  document.getElementById('mainApp').style.display = 'block';
+}
+
+// ============================================
 // AUTENTIFICARE
 // ============================================
-function handleAuthClick() {
-  if (isAdmin()) {
-    if (!confirm('🔒 Ieși din modul Admin?')) return;
-    currentRole = 'viewer';
-    sessionStorage.setItem(SESSION_KEY, 'viewer');
-    applyRole();
-    toast('Ai ieșit din modul Admin', '🔒');
-  } else {
-    openLogin();
-  }
-}
+function unlockSite() {
+  const pass = document.getElementById('lockPassword').value;
+  const err = document.getElementById('lockError');
 
-function openLogin() {
-  document.getElementById('adminPassword').value = '';
-  document.getElementById('loginModal').classList.add('active');
-  setTimeout(() => document.getElementById('adminPassword').focus(), 100);
-}
-
-function closeLogin() {
-  document.getElementById('loginModal').classList.remove('active');
-}
-
-function loginAdmin() {
-  const pass = document.getElementById('adminPassword').value;
   if (pass === ADMIN_PASSWORD) {
     currentRole = 'admin';
     sessionStorage.setItem(SESSION_KEY, 'admin');
-    closeLogin();
+    err.textContent = '';
+    showApp();
     applyRole();
-    toast('Bine ai venit, Admin!', '🔓');
+    toast('Bine ai venit, Admin!', '👑');
+  } else if (pass === VIEWER_PASSWORD) {
+    currentRole = 'viewer';
+    sessionStorage.setItem(SESSION_KEY, 'viewer');
+    err.textContent = '';
+    showApp();
+    applyRole();
+    toast('Bine ai venit!', '👋');
   } else {
-    toast('Parolă incorectă!', '❌');
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('adminPassword').focus();
+    err.textContent = '❌ Parolă incorectă! Încearcă din nou.';
+    document.getElementById('lockPassword').value = '';
+    document.getElementById('lockPassword').focus();
   }
 }
 
+function handleAuthClick() {
+  if (!confirm('🔒 Vrei să te deconectezi?')) return;
+  currentRole = null;
+  sessionStorage.removeItem(SESSION_KEY);
+  showWelcome();
+}
+
+// ============================================
+// APLICĂ ROL
+// ============================================
 function applyRole() {
   const admin = isAdmin();
-
   const badge = document.getElementById('roleBadge');
   if (admin) {
     badge.className = 'role-badge role-admin';
@@ -590,13 +917,9 @@ function applyRole() {
     badge.className = 'role-badge role-viewer';
     badge.textContent = '👁️ Vizitator';
   }
-
-  document.getElementById('authBtn').textContent = admin ? '🚪 Ieși' : '🔐 Admin';
-
   document.querySelectorAll('.admin-only').forEach(el => {
     el.style.display = admin ? 'inline-flex' : 'none';
   });
-
   render();
 }
 
@@ -642,7 +965,6 @@ function renderGrid() {
 
   let filtered = data.filter(p => {
     const matchFilter = currentFilter === 'all' || p.category === currentFilter;
-    // Căutarea după link se face doar pentru admin (vizitatorul nu vede linkul)
     const matchSearch = !q ||
       p.title.toLowerCase().includes(q) ||
       (admin && p.link.toLowerCase().includes(q)) ||
@@ -669,7 +991,6 @@ function renderGrid() {
       ? `<img src="${p.thumb}" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>🖼️</div>'">`
       : `<div class="placeholder">${(p.category || '📌').split(' ')[0]}</div>`;
 
-    // 🔒 LINKUL — vizibil DOAR pentru admin
     const linkHtml = admin
       ? `<div class="card-link admin-visible">
            <span class="link-label">ADMIN</span>
@@ -677,7 +998,6 @@ function renderGrid() {
          </div>`
       : '';
 
-    // Butoane în funcție de rol
     const actions = admin
       ? `
         <button class="btn btn-open" onclick="openLink('${p.id}')" title="Deschide în tab nou">🔗 Deschide</button>
@@ -718,7 +1038,7 @@ function escapeHtml(s) {
 }
 
 // ============================================
-// MODAL CRUD (doar admin)
+// MODAL CRUD
 // ============================================
 function openModal() {
   if (!isAdmin()) return;
@@ -731,9 +1051,7 @@ function openModal() {
   document.getElementById('modal').classList.add('active');
 }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('active');
-}
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
 function editPI(id) {
   if (!isAdmin()) return;
@@ -758,10 +1076,7 @@ function savePI() {
   const title = document.getElementById('f-title').value.trim();
   const link = document.getElementById('f-link').value.trim();
 
-  if (!title || !link) {
-    toast('Completează titlul și link-ul!', '⚠️');
-    return;
-  }
+  if (!title || !link) { toast('Completează titlul și link-ul!', '⚠️'); return; }
 
   const obj = {
     id: id || uid(),
@@ -780,14 +1095,13 @@ function savePI() {
     data.push(obj);
     toast('PI adăugat!');
   }
-
   save();
   closeModal();
   render();
 }
 
 // ============================================
-// ȘTERGERE (doar admin)
+// ȘTERGERE
 // ============================================
 function deletePI(id) {
   if (!isAdmin()) return;
@@ -804,31 +1118,18 @@ function deleteCurrent() {
   if (!isAdmin()) return;
   const id = document.getElementById('f-id').value;
   if (!id) return;
-  const p = data.find(x => x.id === id);
-  if (!p) return;
-  if (!confirm(`🗑️ Ștergi PI-ul „${p.title}"?\n\nAceastă acțiune nu poate fi anulată.`)) return;
-  data = data.filter(x => x.id !== id);
-  save();
+  deletePI(id);
   closeModal();
-  render();
-  toast('PI șters', '🗑️');
 }
 
 function deleteAll() {
   if (!isAdmin()) return;
-  if (data.length === 0) {
-    toast('Nu ai nimic de șters!', '⚠️');
-    return;
-  }
+  if (data.length === 0) { toast('Nu ai nimic de șters!', '⚠️'); return; }
   const raspuns = prompt(
     `⚠️ ATENȚIE!\n\nUrmează să ștergi TOATE cele ${data.length} PI-uri.\n\n` +
-    `Această acțiune NU poate fi anulată.\n\n` +
-    `Scrie „STERGE" (cu majuscule) pentru a confirma:`
+    `Această acțiune NU poate fi anulată.\n\nScrie „STERGE" pentru a confirma:`
   );
-  if (raspuns !== 'STERGE') {
-    toast('Ștergere anulată', '❌');
-    return;
-  }
+  if (raspuns !== 'STERGE') { toast('Ștergere anulată', '❌'); return; }
   data = [];
   save();
   render();
@@ -836,25 +1137,19 @@ function deleteAll() {
 }
 
 // ============================================
-// DESCHIDERE (toți utilizatorii)
+// DESCHIDERE
 // ============================================
 function openLink(id) {
   const p = data.find(x => x.id === id);
-  if (!p) {
-    toast('PI negăsit', '❌');
-    return;
-  }
+  if (!p) { toast('PI negăsit', '❌'); return; }
   const url = normalizeUrl(p.link);
   const w = window.open(url, '_blank');
-  if (!w) {
-    toast('Permite pop-up-urile pentru a deschide!', '⚠️');
-  } else {
-    toast(`Deschis: ${p.title}`, '🔗');
-  }
+  if (!w) toast('Permite pop-up-urile!', '⚠️');
+  else toast(`Deschis: ${p.title}`, '🔗');
 }
 
 // ============================================
-// IMPORT / EXPORT (doar admin)
+// IMPORT / EXPORT
 // ============================================
 function exportData() {
   if (!isAdmin()) return;
@@ -881,15 +1176,13 @@ document.getElementById('importFile').addEventListener('change', e => {
     try {
       const imported = JSON.parse(ev.target.result);
       if (Array.isArray(imported)) {
-        if (!confirm(`Importi ${imported.length} PI-uri? Vor fi ADĂUGATE peste cele existente.`)) return;
+        if (!confirm(`Importi ${imported.length} PI-uri?`)) return;
         data = data.concat(imported);
         save();
         render();
         toast(`${imported.length} PI-uri importate!`, '📤');
       }
-    } catch {
-      toast('Fișier invalid!', '❌');
-    }
+    } catch { toast('Fișier invalid!', '❌'); }
   };
   reader.readAsText(file);
   e.target.value = '';
@@ -907,17 +1200,13 @@ document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') closeModal();
 });
 
-document.getElementById('loginModal').addEventListener('click', e => {
-  if (e.target.id === 'loginModal') closeLogin();
-});
-
-document.getElementById('adminPassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') loginAdmin();
+document.getElementById('lockPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') unlockSite();
 });
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeModal(); closeLogin(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+  if (e.key === 'Escape') closeModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k' && isLoggedIn()) {
     e.preventDefault();
     document.getElementById('search').focus();
   }
@@ -926,7 +1215,12 @@ document.addEventListener('keydown', e => {
 // ============================================
 // INIT
 // ============================================
-applyRole();
+if (isLoggedIn()) {
+  showApp();
+  applyRole();
+} else {
+  showWelcome();
+}
 </script>
 
 </body>
