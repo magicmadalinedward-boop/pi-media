@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📌 PI Manager — Puncte de Interes</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-card: #1a1d29;
+    --bg-card-hover: #232736;
+    --accent: #6c5ce7;
+    --accent-2: #00d4ff;
+    --text: #e8eaf0;
+    --text-dim: #8b90a5;
+    --border: #2a2e3f;
+    --success: #00d68f;
+    --warning: #ffaa00;
+    --danger: #ff4757;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(108,92,231,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(0,212,255,0.1) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(20px);
+    background: rgba(15,17,23,0.85);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+  }
+  .header-inner {
+    max-width: 1400px; margin: 0 auto;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+  }
+  .logo-icon { font-size: 26px; -webkit-text-fill-color: initial; }
+
+  .search-box { flex: 1; min-width: 200px; position: relative; }
+  .search-box input {
+    width: 100%; padding: 12px 16px 12px 44px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text); font-size: 14px;
+    transition: all .2s;
+  }
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.2);
+  }
+  .search-box::before {
+    content: '🔍'; position: absolute;
+    left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; opacity: .6;
+  }
+
+  .btn {
+    padding: 12px 20px; border-radius: 12px;
+    border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600;
+    transition: all .2s; display: inline-flex;
+    align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(108,92,231,0.4);
+  }
+  .btn-ghost {
+    background: var(--bg-card); color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .btn-danger {
+    background: var(--bg-card); color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+  .btn-danger:hover { background: var(--danger); color: white; }
+  .btn-open {
+    background: var(--bg-card); color: var(--accent-2);
+    border: 1px solid var(--accent-2);
+  }
+  .btn-open:hover {
+    background: var(--accent-2); color: #000;
+    box-shadow: 0 0 16px rgba(0,212,255,0.5);
+  }
+
+  .role-badge {
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .role-admin {
+    background: rgba(108,92,231,0.2);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .role-viewer {
+    background: rgba(0,212,255,0.15);
+    color: var(--accent-2);
+    border: 1px solid var(--accent-2);
+  }
+
+  .filters {
+    max-width: 1400px; margin: 20px auto 0;
+    padding: 0 32px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .chip {
+    padding: 8px 16px; border-radius: 999px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-dim); font-size: 13px; cursor: pointer;
+    transition: all .2s;
+  }
+  .chip:hover { color: var(--text); border-color: var(--accent); }
+  .chip.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: white; border-color: transparent;
+  }
+
+  .stats {
+    max-width: 1400px; margin: 24px auto 0;
+    padding: 0 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .stat {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+    position: relative; overflow: hidden;
+  }
+  .stat::after {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  }
+  .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .stat-value { font-size: 28px; font-weight: 700; margin-top: 6px; }
+
+  main { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+
+  .card-media {
+    width: 100%; aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #1a1d29, #2a2e3f);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+  .card-media img { width: 100%; height: 100%; object-fit: cover; }
+  .card-media .placeholder { font-size: 48px; opacity: .4; }
+  .card-media:hover::after {
+    content: '🔗 Click pentru a deschide';
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; font-weight: 600;
+    backdrop-filter: blur(4px);
+  }
+
+  .card-status {
+    position: absolute; top: 12px; left: 12px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; gap: 6px;
+    z-index: 2;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
+  .dot.offline { background: var(--danger); }
+  .dot.unknown { background: var(--warning); }
+
+  .card-type {
+    position: absolute; top: 12px; right: 12px;
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 11px; font-weight: 600;
+    background: rgba(108,92,231,0.8);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+  }
+
+  .card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+  .card-title {
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px;
+  }
+  .card-desc {
+    font-size: 13px; color: var(--text-dim);
+    line-height: 1.5; margin-bottom: 12px;
+    display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .card-link {
+    font-size: 12px; color: var(--accent-2);
+    font-family: 'Courier New', monospace;
+    background: rgba(0,212,255,0.1);
+    padding: 6px 10px; border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    position: relative;
+  }
+  .card-link.admin-visible {
+    border: 1px dashed rgba(0,212,255,0.4);
+  }
+  .card-link .link-label {
+    position: absolute; top: -8px; right: 8px;
+    background: var(--bg-card); padding: 1px 6px;
+    font-size: 9px; color: var(--accent);
+    border-radius: 4px; letter-spacing: .5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+  .card-actions {
+    display: flex; gap: 6px; margin-top: auto;
+  }
+  .card-actions .btn {
+    flex: 1; justify-content: center;
+    padding: 8px 10px; font-size: 12px;
+  }
+  .card-actions .btn-open { flex: 1.6; }
+  .card-actions.viewer .btn-open { flex: 1; width: 100%; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp .3s ease;
+  }
+  .modal-sm { max-width: 420px; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; }
+  .modal-close {
+    background: none; border: none; color: var(--text-dim);
+    font-size: 22px; cursor: pointer; padding: 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 24px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--text-dim); margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%; padding: 12px 14px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-size: 14px; font-family: inherit;
+    transition: all .2s;
+  }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.15);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .modal-footer {
+    padding: 16px 24px 24px;
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .modal-footer .btn { flex: 1; justify-content: center; min-width: 100px; }
+
+  .empty {
+    text-align: center; padding: 80px 20px;
+    color: var(--text-dim);
+  }
+  .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: .5; }
+  .empty h3 { font-size: 20px; color: var(--text); margin-bottom: 8px; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+    padding: 14px 20px; border-radius: 12px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text); font-size: 14px;
+    display: flex; align-items: center; gap: 10px;
+    animation: slideIn .3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .login-info {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .login-info b { color: var(--accent-2); }
+
+  @media (max-width: 640px) {
+    header { padding: 12px 16px; }
+    .filters, .stats, main { padding-left: 16px; padding-right: 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .header-inner { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">📌</span>
+      <span>PI Manager</span>
+    </div>
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Caută după titlu, categorie sau link...">
+    </div>
+    <span class="role-badge" id="roleBadge"></span>
+    <button class="btn btn-ghost admin-only" onclick="exportData()">📥 Export</button>
+    <button class="btn btn-ghost admin-only" onclick="importDataClick()">📤 Import</button>
+    <button class="btn btn-danger admin-only" onclick="deleteAll()">🗑️ Șterge tot</button>
+    <button class="btn btn-primary admin-only" onclick="openModal()">➕ Adaugă PI</button>
+    <button class="btn btn-ghost" id="authBtn" onclick="handleAuthClick()">🔐 Admin</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+</header>
+
+<div class="filters" id="filters"></div>
+
+<div class="stats" id="stats"></div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <div class="modal-title">🔐 Autentificare Admin</div>
+      <button class="modal-close" onclick="closeLogin()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="login-info">
+        <b>Vizitator:</b> vede doar titlul și butonul Deschide<br>
+        <b>Admin:</b> vede link-ul și poate edita PI-uri
+      </div>
+      <div class="form-group">
+        <label>Parolă admin</label>
+        <input type="password" id="adminPassword" placeholder="Introdu parola..." autocomplete="current-password">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeLogin()">Anulează</button>
+      <button class="btn btn-primary" onclick="loginAdmin()">🔓 Autentificare</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">➕ Adaugă PI nou</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="f-id">
+      <div class="form-group">
+        <label>Titlu *</label>
+        <input type="text" id="f-title" placeholder="ex: Cameră intrare">
+      </div>
+      <div class="form-group">
+        <label>Link / Adresă *</label>
+        <input type="text" id="f-link" placeholder="ex: 192.168.1.1:85 sau http://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categorie</label>
+          <select id="f-category">
+            <option>📷 Cameră</option>
+            <option>🏛️ Monument</option>
+            <option>🖼️ Muzeu</option>
+            <option>🌳 Parc</option>
+            <option>🍽️ Restaurant</option>
+            <option>🏨 Cazare</option>
+            <option>📸 Photo Spot</option>
+            <option>🎭 Eveniment</option>
+            <option>🚏 Transport</option>
+            <option>🛍️ Shopping</option>
+            <option>❓ Altele</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="f-status">
+            <option value="unknown">❔ Necunoscut</option>
+            <option value="online">🟢 Activ</option>
+            <option value="offline">🔴 Inactiv</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Descriere</label>
+        <textarea id="f-desc" placeholder="Detalii scurte despre acest PI..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>URL Thumbnail (poză preview)</label>
+        <input type="text" id="f-thumb" placeholder="https://.../poza.jpg">
+      </div>
+      <div class="form-group">
+        <label>Tag-uri (separate prin virgulă)</label>
+        <input type="text" id="f-tags" placeholder="ex: exterior, noapte, 4K">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="btnDelete" style="display:none" onclick="deleteCurrent()">🗑️ Șterge</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Anulează</button>
+      <button class="btn btn-primary" onclick="savePI()">💾 Salvează</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// ⚙️ CONFIGURARE — SCHIMBĂ PAROLA AICI!
+// ============================================
+const ADMIN_PASSWORD = 'admin123'; // ⬅️ SCHIMBĂ CU PAROLA TA
+const SESSION_KEY = 'pi_manager_role';
+const STORAGE_KEY = 'pi_manager_data_v1';
+
+// ============================================
+// STARE
+// ============================================
+let currentRole = sessionStorage.getItem(SESSION_KEY) || 'viewer';
+let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let currentFilter = 'all';
+let currentSearch = '';
+
+// Demo initial
+if (data.length === 0) {
+  data = [
+    { id: '1', title: 'Cameră intrare', link: '192.168.1.1:85', category: '📷 Cameră',
+      status: 'online', desc: 'Cameră principală la intrare', thumb: '', tags: 'exterior,24/7' },
+    { id: '2', title: 'Cameră parcare', link: '192.168.1.2:85', category: '📷 Cameră',
+      status: 'online', desc: 'Supraveghere parcare spate', thumb: '', tags: 'exterior' },
+  ];
+  save();
+}
+
+// ============================================
+// HELPERS
+// ============================================
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function isAdmin() { return currentRole === 'admin'; }
+function normalizeUrl(link) {
+  if (!link) return '';
+  if (/^https?:\/\//i.test(link)) return link;
+  return 'http://' + link;
+}
+function toast(msg, icon = '✅') {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ============================================
+// AUTENTIFICARE
+// ============================================
+function handleAuthClick() {
+  if (isAdmin()) {
+    if (!confirm('🔒 Ieși din modul Admin?')) return;
+    currentRole = 'viewer';
+    sessionStorage.setItem(SESSION_KEY, 'viewer');
+    applyRole();
+    toast('Ai ieșit din modul Admin', '🔒');
+  } else {
+    openLogin();
+  }
+}
+
+function openLogin() {
+  document.getElementById('adminPassword').value = '';
+  document.getElementById('loginModal').classList.add('active');
+  setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('active');
+}
+
+function loginAdmin() {
+  const pass = document.getElementById('adminPassword').value;
+  if (pass === ADMIN_PASSWORD) {
+    currentRole = 'admin';
+    sessionStorage.setItem(SESSION_KEY, 'admin');
+    closeLogin();
+    applyRole();
+    toast('Bine ai venit, Admin!', '🔓');
+  } else {
+    toast('Parolă incorectă!', '❌');
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPassword').focus();
+  }
+}
+
+function applyRole() {
+  const admin = isAdmin();
+
+  const badge = document.getElementById('roleBadge');
+  if (admin) {
+    badge.className = 'role-badge role-admin';
+    badge.textContent = '👑 Admin';
+  } else {
+    badge.className = 'role-badge role-viewer';
+    badge.textContent = '👁️ Vizitator';
+  }
+
+  document.getElementById('authBtn').textContent = admin ? '🚪 Ieși' : '🔐 Admin';
+
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = admin ? 'inline-flex' : 'none';
+  });
+
+  render();
+}
+
+// ============================================
+// RENDER
+// ============================================
+function render() {
+  renderFilters();
+  renderStats();
+  renderGrid();
+}
+
+function renderFilters() {
+  const cats = ['all', ...new Set(data.map(p => p.category))];
+  const container = document.getElementById('filters');
+  container.innerHTML = cats.map(c => `
+    <div class="chip ${currentFilter === c ? 'active' : ''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">
+      ${c === 'all' ? '📋 Toate' : c}
+    </div>
+  `).join('');
+}
+
+function setFilter(f) { currentFilter = f; render(); }
+
+function renderStats() {
+  const total = data.length;
+  const online = data.filter(p => p.status === 'online').length;
+  const offline = data.filter(p => p.status === 'offline').length;
+  const cats = new Set(data.map(p => p.category)).size;
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-label">Total PI-uri</div><div class="stat-value">${total}</div></div>
+    <div class="stat"><div class="stat-label">Active</div><div class="stat-value" style="color:var(--success)">${online}</div></div>
+    <div class="stat"><div class="stat-label">Inactive</div><div class="stat-value" style="color:var(--danger)">${offline}</div></div>
+    <div class="stat"><div class="stat-label">Categorii</div><div class="stat-value">${cats}</div></div>
+  `;
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const q = currentSearch.toLowerCase();
+  const admin = isAdmin();
+
+  let filtered = data.filter(p => {
+    const matchFilter = currentFilter === 'all' || p.category === currentFilter;
+    // Căutarea după link se face doar pentru admin (vizitatorul nu vede linkul)
+    const matchSearch = !q ||
+      p.title.toLowerCase().includes(q) ||
+      (admin && p.link.toLowerCase().includes(q)) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.tags || '').toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty" style="grid-column: 1/-1;">
+        <div class="empty-icon">📭</div>
+        <h3>Niciun PI găsit</h3>
+        <p>${admin ? 'Adaugă primul PI apăsând butonul „➕ Adaugă PI"' : 'Nu există PI-uri disponibile momentan'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const statusClass = p.status || 'unknown';
+    const statusLabel = statusClass === 'online' ? 'Activ' :
+                        statusClass === 'offline' ? 'Inactiv' : 'Necunoscut';
+    const media = p.thumb
+      ? `<img src="${p.thumb}" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>🖼️</div>'">`
+      : `<div class="placeholder">${(p.category || '📌').split(' ')[0]}</div>`;
+
+    // 🔒 LINKUL — vizibil DOAR pentru admin
+    const linkHtml = admin
+      ? `<div class="card-link admin-visible">
+           <span class="link-label">ADMIN</span>
+           ${escapeHtml(p.link)}
+         </div>`
+      : '';
+
+    // Butoane în funcție de rol
+    const actions = admin
+      ? `
+        <button class="btn btn-open" onclick="openLink('${p.id}')" title="Deschide în tab nou">🔗 Deschide</button>
+        <button class="btn btn-ghost" onclick="editPI('${p.id}')" title="Editează">✏️</button>
+        <button class="btn btn-danger" onclick="deletePI('${p.id}')" title="Șterge">🗑️</button>
+      `
+      : `
+        <button class="btn btn-open" onclick="openLink('${p.id}')" title="Deschide în tab nou">🔗 Deschide</button>
+      `;
+
+    return `
+      <div class="card">
+        <div class="card-media" onclick="openLink('${p.id}')">
+          ${media}
+          <div class="card-status">
+            <span class="dot ${statusClass}"></span>
+            <span>${statusLabel}</span>
+          </div>
+          <div class="card-type">${p.category}</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${escapeHtml(p.title)}</div>
+          ${p.desc ? `<div class="card-desc">${escapeHtml(p.desc)}</div>` : ''}
+          ${linkHtml}
+          <div class="card-actions ${admin ? '' : 'viewer'}">
+            ${actions}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+
+// ============================================
+// MODAL CRUD (doar admin)
+// ============================================
+function openModal() {
+  if (!isAdmin()) return;
+  document.getElementById('modalTitle').textContent = '➕ Adaugă PI nou';
+  document.getElementById('f-id').value = '';
+  ['f-title','f-link','f-desc','f-thumb','f-tags'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-category').selectedIndex = 0;
+  document.getElementById('f-status').value = 'unknown';
+  document.getElementById('btnDelete').style.display = 'none';
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+function editPI(id) {
+  if (!isAdmin()) return;
+  const p = data.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('modalTitle').textContent = '✏️ Editează PI';
+  document.getElementById('f-id').value = p.id;
+  document.getElementById('f-title').value = p.title;
+  document.getElementById('f-link').value = p.link;
+  document.getElementById('f-category').value = p.category;
+  document.getElementById('f-status').value = p.status || 'unknown';
+  document.getElementById('f-desc').value = p.desc || '';
+  document.getElementById('f-thumb').value = p.thumb || '';
+  document.getElementById('f-tags').value = p.tags || '';
+  document.getElementById('btnDelete').style.display = 'inline-flex';
+  document.getElementById('modal').classList.add('active');
+}
+
+function savePI() {
+  if (!isAdmin()) return;
+  const id = document.getElementById('f-id').value;
+  const title = document.getElementById('f-title').value.trim();
+  const link = document.getElementById('f-link').value.trim();
+
+  if (!title || !link) {
+    toast('Completează titlul și link-ul!', '⚠️');
+    return;
+  }
+
+  const obj = {
+    id: id || uid(),
+    title, link,
+    category: document.getElementById('f-category').value,
+    status: document.getElementById('f-status').value,
+    desc: document.getElementById('f-desc').value.trim(),
+    thumb: document.getElementById('f-thumb').value.trim(),
+    tags: document.getElementById('f-tags').value.trim(),
+  };
+
+  if (id) {
+    data = data.map(p => p.id === id ? obj : p);
+    toast('PI actualizat!');
+  } else {
+    data.push(obj);
+    toast('PI adăugat!');
+  }
+
+  save();
+  closeModal();
+  render();
+}
+
+// ============================================
+// ȘTERGERE (doar admin)
+// ============================================
+function deletePI(id) {
+  if (!isAdmin()) return;
+  const p = data.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm(`🗑️ Ștergi PI-ul „${p.title}"?\n\nAceastă acțiune nu poate fi anulată.`)) return;
+  data = data.filter(x => x.id !== id);
+  save();
+  render();
+  toast('PI șters', '🗑️');
+}
+
+function deleteCurrent() {
+  if (!isAdmin()) return;
+  const id = document.getElementById('f-id').value;
+  if (!id) return;
+  const p = data.find(x => x.id === id);
+  if (!p) return;
+  if (!confirm(`🗑️ Ștergi PI-ul „${p.title}"?\n\nAceastă acțiune nu poate fi anulată.`)) return;
+  data = data.filter(x => x.id !== id);
+  save();
+  closeModal();
+  render();
+  toast('PI șters', '🗑️');
+}
+
+function deleteAll() {
+  if (!isAdmin()) return;
+  if (data.length === 0) {
+    toast('Nu ai nimic de șters!', '⚠️');
+    return;
+  }
+  const raspuns = prompt(
+    `⚠️ ATENȚIE!\n\nUrmează să ștergi TOATE cele ${data.length} PI-uri.\n\n` +
+    `Această acțiune NU poate fi anulată.\n\n` +
+    `Scrie „STERGE" (cu majuscule) pentru a confirma:`
+  );
+  if (raspuns !== 'STERGE') {
+    toast('Ștergere anulată', '❌');
+    return;
+  }
+  data = [];
+  save();
+  render();
+  toast('Toate PI-urile au fost șterse', '🗑️');
+}
+
+// ============================================
+// DESCHIDERE (toți utilizatorii)
+// ============================================
+function openLink(id) {
+  const p = data.find(x => x.id === id);
+  if (!p) {
+    toast('PI negăsit', '❌');
+    return;
+  }
+  const url = normalizeUrl(p.link);
+  const w = window.open(url, '_blank');
+  if (!w) {
+    toast('Permite pop-up-urile pentru a deschide!', '⚠️');
+  } else {
+    toast(`Deschis: ${p.title}`, '🔗');
+  }
+}
+
+// ============================================
+// IMPORT / EXPORT (doar admin)
+// ============================================
+function exportData() {
+  if (!isAdmin()) return;
+  if (data.length === 0) { toast('Nu ai date de exportat', '⚠️'); return; }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `pi-manager-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast('Date exportate!', '📥');
+}
+
+function importDataClick() {
+  if (!isAdmin()) return;
+  document.getElementById('importFile').click();
+}
+
+document.getElementById('importFile').addEventListener('change', e => {
+  if (!isAdmin()) return;
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (Array.isArray(imported)) {
+        if (!confirm(`Importi ${imported.length} PI-uri? Vor fi ADĂUGATE peste cele existente.`)) return;
+        data = data.concat(imported);
+        save();
+        render();
+        toast(`${imported.length} PI-uri importate!`, '📤');
+      }
+    } catch {
+      toast('Fișier invalid!', '❌');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// ============================================
+// EVENTS
+// ============================================
+document.getElementById('search').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  renderGrid();
+});
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+document.getElementById('loginModal').addEventListener('click', e => {
+  if (e.target.id === 'loginModal') closeLogin();
+});
+
+document.getElementById('adminPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loginAdmin();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeLogin(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('search').focus();
+  }
+});
+
+// ============================================
+// INIT
+// ============================================
+applyRole();
+</script>
+
+</body>
+</html>
